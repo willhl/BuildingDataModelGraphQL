@@ -1,0 +1,115 @@
+
+type Building{
+  Name: String
+  Spaces: [Space] @cypher(statement:"MATCH (n:Space) RETURN n")
+  Assets: [Asset] @cypher(statement:"MATCH (n:Asset) RETURN n")
+  AssetTypes: [ElementType] @cypher(statement:"MATCH (n:Asset)-[:IS_OF]->(t) RETURN DISTINCT t")
+  Models: [RevitModel] @cypher(statement:"MATCH (n:RevitModel) RETURN n")
+  Levels: [Level] @cypher(statement:"MATCH (n:Level) RETURN n")
+}
+
+type Level{
+  Name: String
+  Spaces: [Space] @cypher(statement:"MATCH (this)<-[:IS_ON]-(n:Space) RETURN n")
+  Assets: [Asset] @cypher(statement:"MATCH (this)<-[:IS_ON]-(n:Asset) RETURN n")
+  Sensors: [Sensor] @cypher(statement:"MATCH (this)<-[:IS_ON]-(n)<-[SENSING]-(s:Sensor) RETURN s")
+}
+
+
+type Space  {
+  Number: String
+  Name: String
+  Area: Float
+  Assets: [Asset] @cypher(statement:"MATCH (this)<-[:IS_IN_SPACE]-(d) RETURN d")
+  SensedAssets: [Asset] @cypher(statement:"MATCH (this)<-[:IS_IN_SPACE]-(d)<-[SENSING]-(s:Sensor) RETURN d")
+  BoundingSurfaces: [Section] @relation(name:"BOUNDED_BY")
+  Doors: [Door] @cypher(statement:"MATCH (this)-[:BOUNDED_BY]-(s:Surface)-[:IS_ON]->(d:Door) RETURN d")
+  Windows: [Window] @cypher(statement:"MATCH (this)-[:BOUNDED_BY]-(s:Surface)-[:IS_ON]->(d:Window) RETURN d")
+  Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
+  HasSensors: Boolean
+}
+
+type Sensor {
+  Name: String
+  Family_and_Type: String
+  SensedAssets: [Asset] @relation(name:"SENSING",direction:OUT)
+  Device_Name: String
+  Data_Metric_Name : String
+  Data_URI: String
+  Data_Request_Body: String
+  Data_Authentication: String
+}
+
+
+type Asset {
+  Name: String
+  BIMUniqueID: String @cypher(statement:"MATCH (this) RETURN this.TempId")
+  _internal_id: String @cypher(statement:"MATCH (this) RETURN id(this)")
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+  Labels: [String] @cypher(statement:"MATCH (this) RETURN labels(this)")
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
+  HasSensors: Boolean
+  Type: ElementType @relation(name:"IS_OF",direction:OUT)
+}
+
+type ElementType {
+  Name: String
+  ClassificationCode: String
+  Category: String
+  Type_Name: String
+  Family_Name: String
+  Description: String
+  Assets: [Asset] @relation(name:"IS_OF",direction:IN)
+}
+
+
+type Terminal {
+  Name: String
+  Spaces: [Space] @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type DuctAccessory {
+  Name: String
+  Spaces: [Space] @relation(name:"IS_IN_SPACE",direction:OUT)
+  Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
+  Type: [ElementType] @relation(name:"IS_OF",direction:OUT)
+}
+
+type Section {
+  Name: String
+  SectionArea: Float @cypher(statement:"MATCH (this)-[r:BOUNDED_BY]->(e) RETURN r.Area")
+  SectionFacingVectorX: [Float] @cypher(statement:"MATCH (this)-[r:BOUNDED_BY]->(e) RETURN r.DirectionX")
+  SectionFacingVectorY: [Float] @cypher(statement:"MATCH (this)-[r:BOUNDED_BY]->(e) RETURN r.DirectionY")
+  SectionFacingVectorZ: [Float] @cypher(statement:"MATCH (this)-[r:BOUNDED_BY]->(e) RETURN r.DirectionZ")
+  Spaces: [Space] @relation(name:"BOUNDED_BY")
+  Assets: [Asset] @relation(name:"IS_ON")
+}
+
+type RevitModel {
+  Project_Name: String
+  ModelElements: [ModelElement] @relation(name:"IS_IN",direction:IN)
+}
+
+type ModelElement {
+  Classification: String
+  Family: String
+  Family_Name: String
+  Family_and_Type: String
+  RevitModels: [RevitModel] @relation(name:"IS_IN",direction:OUT)
+  Assets: [Asset] @relation(name:"REALIZED_BY",direction:IN)
+}
+
+
+type Door {
+	Name: String
+	Type: [ElementType] @relation(name:"IS_OF",direction:OUT)
+	Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
+}
+
+type Window {
+	Name: String
+	Type: [ElementType] @relation(name:"IS_OF",direction:OUT)
+	Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
+}
+
