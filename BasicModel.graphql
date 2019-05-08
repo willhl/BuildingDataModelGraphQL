@@ -17,6 +17,8 @@ type Level{
 
 
 type Space  {
+  BIMAbstractID: String @cypher(statement:"MATCH (this) RETURN this.TempId")
+  BIMExternalID: String @cypher(statement:"MATCH (this)-[:REALIZED_BY]->(me:ModelElement) return me.UniqueId")
   Number: String
   Name: String
   Area: Float
@@ -31,7 +33,11 @@ type Space  {
 
 type Sensor {
   Name: String
+  BIMAbstractID: String @cypher(statement:"MATCH (this) RETURN this.TempId")
+  BIMExternalID: String @cypher(statement:"MATCH (this)-[:REALIZED_BY]->(me:ModelElement) return me.UniqueId")
+  BIMReference: String @cypher(statement:"MATCH (this)-[:IS_ON]->(lvl:Level) OPTIONAL MATCH (this)-[:IS_IN_SPACE]->(sp:Space) OPTIONAL MATCH (this)-[:IS_OF]->(typ:ElementType) OPTIONAL MATCH  (this)-[:REALIZED_BY]->(me:ModelElement) RETURN typ.Family_Name + \\\"~\\\" + typ.Name + \\\"~\\\" + coalesce(lvl.Name,\\\"?\\\") + \\\"~\\\" + coalesce(sp.Number,\\\"?\\\") + \\\"~\\\" + coalesce(this.Mark,\\\"\\\")")
   Family_and_Type: String
+  Type_Name: String
   SensedAssets: [Asset] @relation(name:"SENSING",direction:OUT)
   Device_Name: String
   Data_Metric_Name : String
@@ -43,7 +49,9 @@ type Sensor {
 
 type Asset {
   Name: String
-  BIMUniqueID: String @cypher(statement:"MATCH (this) RETURN this.TempId")
+  BIMAbstractID: String @cypher(statement:"MATCH (this) RETURN this.TempId")
+  BIMExternalID: String @cypher(statement:"MATCH (this)-[:REALIZED_BY]->(me:ModelElement) return me.UniqueId")
+  BIMReference: String @cypher(statement:"MATCH (this)-[:IS_ON]->(lvl:Level) OPTIONAL MATCH (this)-[:IS_IN_SPACE]->(sp:Space) OPTIONAL MATCH (this)-[:IS_OF]->(typ:ElementType) OPTIONAL MATCH  (this)-[:REALIZED_BY]->(me:ModelElement) RETURN typ.Family_Name + \\\"~\\\" + typ.Name + \\\"~\\\" + coalesce(lvl.Name,\\\"?\\\") + \\\"~\\\" + coalesce(sp.Number,\\\"?\\\") + \\\"~\\\" + coalesce(this.Mark,\\\"\\\")")
   _internal_id: String @cypher(statement:"MATCH (this) RETURN id(this)")
   Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
   Labels: [String] @cypher(statement:"MATCH (this) RETURN labels(this)")
@@ -92,6 +100,7 @@ type RevitModel {
 }
 
 type ModelElement {
+  ExternalID: [String]
   Classification: String
   Family: String
   Family_Name: String
