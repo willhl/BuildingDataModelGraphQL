@@ -1,68 +1,18 @@
 
-type Building{
+ 
+ 
+ 
+interface AbstractElement{
   Name: String
-  Spaces: [Space] @cypher(statement:"MATCH (n:Space) RETURN n")
-  Assets: [Asset] @cypher(statement:"MATCH (n:Asset) RETURN n")
-  AssetTypes: [ElementType] @cypher(statement:"MATCH (n:Asset)-[:IS_OF]->(t) RETURN DISTINCT t")
-  Models: [RevitModel] @cypher(statement:"MATCH (n:RevitModel) RETURN n")
-  Levels: [Level] @cypher(statement:"MATCH (n:Level) RETURN n")
-}
-
-type Level{
-  Name: String
-  Spaces: [Space] @cypher(statement:"MATCH (this)<-[:IS_ON]-(n:Space) RETURN n")
-  Assets: [Asset] @cypher(statement:"MATCH (this)<-[:IS_ON]-(n:Asset) RETURN n")
-  Sensors: [Sensor] @cypher(statement:"MATCH (this)<-[:IS_ON]-(n)<-[SENSING]-(s:Sensor) RETURN s")
-}
-
-
-type Space  {
-  BIMAbstractID: String @cypher(statement:"MATCH (this) RETURN this.TempId")
-  BIMExternalID: String @cypher(statement:"MATCH (this)-[:REALIZED_BY]->(me:ModelElement) return me.UniqueId")
-  Number: String
-  Name: String
-  Area: Float
-  Assets: [Asset] @cypher(statement:"MATCH (this)<-[:IS_IN_SPACE]-(d) RETURN d")
-  SensedAssets: [Asset] @cypher(statement:"MATCH (this)<-[:IS_IN_SPACE]-(d)<-[SENSING]-(s:Sensor) RETURN d")
-  BoundingSurfaces: [Section] @relation(name:"BOUNDED_BY")
-  Doors: [Door] @cypher(statement:"MATCH (this)-[:BOUNDED_BY]-(s:Surface)-[:IS_ON]->(d:Door) RETURN d")
-  Windows: [Window] @cypher(statement:"MATCH (this)-[:BOUNDED_BY]-(s:Surface)-[:IS_ON]->(d:Window) RETURN d")
-  Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
-  HasSensors: Boolean
-}
-
-type Sensor {
-  Name: String
-  BIMAbstractID: String @cypher(statement:"MATCH (this) RETURN this.TempId")
-  BIMExternalID: String @cypher(statement:"MATCH (this)-[:REALIZED_BY]->(me:ModelElement) return me.UniqueId")
-  BIMReference: String @cypher(statement:"MATCH (this) OPTIONAL MATCH (this)-[:IS_ON]->(lvl:Level) OPTIONAL MATCH (this)-[:IS_IN_SPACE]->(sp:Space) OPTIONAL MATCH (this)-[:IS_OF]->(typ:ElementType) OPTIONAL MATCH  (this)-[:REALIZED_BY]->(me:ModelElement) RETURN coalesce(typ.Family_Name, \\\"?\\\") + \\\"~\\\" + coalesce(typ.Name, \\\"\\\") + \\\"~\\\" + coalesce(lvl.Name,\\\"?\\\") + \\\"~\\\" + coalesce(sp.Number,\\\"?\\\") + \\\"~\\\" + coalesce(this.Mark,\\\"\\\")")
-  Family_and_Type: String
-  Type_Name: String
-  SensedAssets: [Asset] @relation(name:"SENSING",direction:OUT)
-  BIMSensedExternalId: String
-  Device_Name: String
-  Data_Metric_Name: String
-  Data_Metric_Units: String
-  Data_URI: String
-  Data_Request_Body: String
-  Data_Authentication: String
-}
-
-
-type Asset {
-  Name: String
-  BIMAbstractID: String @cypher(statement:"MATCH (this) RETURN this.TempId")
-  BIMExternalID: String @cypher(statement:"MATCH (this)-[:REALIZED_BY]->(me:ModelElement) return me.UniqueId")
-  BIMRevitElementID: Int @cypher(statement:"MATCH (this)-[:REALIZED_BY]->(me:ModelElement)-[isr:IS_IN]->(r:RevitModel) return isr.ModelId")
-  BIMReference: String
-  BIMReferenceDirective: String @cypher(statement:"MATCH (this) OPTIONAL MATCH (this)-[:IS_ON]->(lvl:Level) OPTIONAL MATCH (this)-[:IS_IN_SPACE]->(sp:Space) OPTIONAL MATCH (this)-[:IS_OF]->(typ:ElementType) OPTIONAL MATCH  (this)-[:REALIZED_BY]->(me:ModelElement) RETURN coalesce(typ.Family_Name, \\\"?\\\") + \\\"~\\\" + coalesce(typ.Name, \\\"?\\\") + \\\"~\\\" + coalesce(lvl.Name,\\\"?\\\") + \\\"~\\\" + coalesce(sp.Number,\\\"?\\\") + \\\"~\\\" + coalesce(this.Mark,\\\"\\\")")
-  _internal_id: String @cypher(statement:"MATCH (this) RETURN id(this)")
-  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
-  Labels: [String] @cypher(statement:"MATCH (this) RETURN labels(this)")
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
   ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
-  Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
-  HasSensors: Boolean
-  Type: ElementType @relation(name:"IS_OF",direction:OUT)
+} 
+
+type ModelElement {
+  ExternalID: String
+  Model: RevitModel @relation(name:"IS_IN",direction:OUT)
+  AbstractElement: AbstractElement @relation(name:"REALIZED_BY",direction:IN)
 }
 
 type ElementType {
@@ -72,84 +22,50 @@ type ElementType {
   Type_Name: String
   Family_Name: String
   Description: String
-  Assets: [Asset] @relation(name:"IS_OF",direction:IN)
+  AbstractElements: [AbstractElement] @relation(name:"IS_OF",direction:IN)
 }
 
-
-type Terminal {
+type Project {
   Name: String
-  Spaces: [Space] @relation(name:"IS_IN_SPACE",direction:OUT)
 }
-
-type DuctAccessory {
+ 
+type Building {
   Name: String
-  Spaces: [Space] @relation(name:"IS_IN_SPACE",direction:OUT)
-  Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
-  Type: [ElementType] @relation(name:"IS_OF",direction:OUT)
-}
-
-type Section {
-  Name: String
-  SectionArea: Float @cypher(statement:"MATCH (this)-[r:BOUNDED_BY]->(e) RETURN r.Area")
-  SectionFacingVectorX: [Float] @cypher(statement:"MATCH (this)-[r:BOUNDED_BY]->(e) RETURN r.DirectionX")
-  SectionFacingVectorY: [Float] @cypher(statement:"MATCH (this)-[r:BOUNDED_BY]->(e) RETURN r.DirectionY")
-  SectionFacingVectorZ: [Float] @cypher(statement:"MATCH (this)-[r:BOUNDED_BY]->(e) RETURN r.DirectionZ")
-  Spaces: [Space] @relation(name:"BOUNDED_BY")
-  Assets: [Asset] @relation(name:"IS_ON")
+  Spaces: [Space] @relation(name:"IS_IN",direction:IN)
+  Models: [RevitModel] @relation(name:"IS_OF",direction:IN)
+  Levels: [Level] @relation(name:"IS_IN",direction:IN)
+  Projects: [Project] @relation(name:"COMPRISES",direction:OUT)
 }
 
 type RevitModel {
   Project_Name: String
+  URI: String
   ModelElements: [ModelElement] @relation(name:"IS_IN",direction:IN)
 }
 
-type ModelElement {
-  ExternalID: [String]
-  Classification: String
-  Family: String
-  Family_Name: String
-  Family_and_Type: String
-  RevitModels: [RevitModel] @relation(name:"IS_IN",direction:OUT)
-  Assets: [Asset] @relation(name:"REALIZED_BY",direction:IN)
+type Level  {
+  Name: String
+  AbstractElements: [AbstractElement] @relation(name:"IS_ON",direction:IN)
+  Spaces: [Space] @relation(name:"IS_ON",direction:IN)
+  Building: Building @relation(name:"IS_IN",direction:OUT)
+}
+  
+type Space implements AbstractElement {
+  TempId: ID!
+  IsExternal: Boolean
+  Number: String
+  Name: String
+  Area: Float
+  Volume: Float
+  Contains: [AbstractElement] @relation(name:"IS_IN_SPACE",direction:IN)
+  BoundingSurfaces: [Surface] @relation(name:"BOUNDED_BY",direction:OUT)
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
 }
 
-
-type Door {
-	Name: String
-	Type: [ElementType] @relation(name:"IS_OF",direction:OUT)
-	Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
-}
-
-type Window {
-	Name: String
-	Type: [ElementType] @relation(name:"IS_OF",direction:OUT)
-	Sensors: [Sensor] @relation(name:"SENSING",direction:IN)
-}
-
-
-
-type ChangeRequest{
-  RequestSource: String
-  RequestedBy: String
-  RequestedOn: String
-  CompletedBy: String
-  CompletedOn: String
-  IsComplete: Boolean
-  Changes: [ParameterChange] @relation(name:"REQUEST",direction:IN)
-}
-
-type ParameterChange{
-  ParameterName: String
-  ChangeSource: Asset @relation(name:"CHANGE",direction:IN)
-  OriginalElement: ModelElement @relation(name:"CHANGES",direction:OUT)
-  ChangedElement: ModelElement @relation(name:"CHANGED",direction:OUT)
-  OldValue: String @cypher(statement:"MATCH (this)-[:CHANGES]->(b) RETURN b[this.ParameterName]")
-  NewValue: String @cypher(statement:"MATCH (this)<-[:CHANGE]-(a) RETURN a[this.ParameterName]")
-}
-
-
-
-type DBPanel{
+type DBPanel implements AbstractElement {
+  Name: String
+  TempId: ID!
   Area: Float
   Category: String
   Family: String
@@ -159,7 +75,6 @@ type DBPanel{
   LocationY: Float
   LocationZ: Float
   Mark: String
-  Name: String
   NominalHeight: Float
   NominalLength: Float
   NominalWidth: Float
@@ -167,7 +82,6 @@ type DBPanel{
   Phase_Demolished: String
   Rated_Current: Float
   Supply_From: String
-  TempId: String
   Type: String
   Type_Id: Int
   Unit_Height: Float
@@ -175,6 +89,8 @@ type DBPanel{
   Unit_Width:Float
   Volume: Float
   Workset: Int
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
   Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
   Level: Level @relation(name:"IS_ON",direction:OUT)
   OutgoingCircuits: [Circuit] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
@@ -182,11 +98,13 @@ type DBPanel{
 }
 
 
-type Circuit{
-  __of_Ground_Conductors: Int 
-  __of_Hot_Conductors: Int 
-  __of_Neutral_Conductors: Int 
-  __of_Runs: Int 
+type Circuit implements AbstractElement {
+  Name: String
+  TempId: ID!
+  No_of_Ground_Conductors: Int 
+  No_of_Hot_Conductors: Int 
+  No_of_Neutral_Conductors: Int 
+  No_of_Runs: Int 
   Apparent_Current: Float
   Apparent_Current_Phase_A: Float 
   Apparent_Current_Phase_B: Float 
@@ -214,7 +132,6 @@ type Circuit{
   Length: Float
   Load_Classification: String 
   Load_Name: String
-  Name: String
   Number_of_Elements: Int
   Number_of_Poles: Int 
   Phase_Conductor_Per_Phase: Int 
@@ -226,7 +143,6 @@ type Circuit{
   RCD_Trip_Current: Float 
   Schedule_Circuit_Notes: String 
   System_Type: String 
-  TempId: String 
   True_Current: Float
   True_Current_Phase_A: Float
   True_Current_Phase_B: Float 
@@ -241,12 +157,19 @@ type Circuit{
   Voltage_Drop: Float 
   Wire_Size: String
   Wire_Type: String
-  Workset: String 
-  Panel: DBPanel @cypher(statement:"MATCH (this)<-[:ELECTRICAL_FLOW_TO]-(panel:DBPanel) RETURN panel")
+  Workset: String
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Panel: DBPanel @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
   Loads: [ElectricalLoad] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
 }
 
-type ElectricalLoad{
+type ElectricalLoad implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  DBID: String @cypher(statement:"MATCH (this) RETURN id(this)")
   Apparent_Load: Float
   Area: Float
   Circuit_Number: String
@@ -268,13 +191,11 @@ type ElectricalLoad{
   LocationY: Float
   LocationZ: Float
   Mark: String
-  Name: String
   Phase_Created: String
   Phase_Demolished: String
   Power_Factor: Float
   RCD_Trip_Current: Float
   RLX_RlxInstId: Int
-  TempId: String
   Type: String
   Type_Id: Int
   Vertical_Offset: Float
@@ -283,5 +204,162 @@ type ElectricalLoad{
   Category: String
   Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
   Level: Level @relation(name:"IS_ON",direction:OUT)
-  Circuit: Circuit @cypher(statement:"MATCH (this)<-[:ELECTRICAL_FLOW_TO]-(circ:Circuit) RETURN circ")
+  Circuit: Circuit @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
 }
+
+
+type SurfaceBoundary @relation(name: "BOUNDED_BY") {
+  from: Space
+  to: Surface
+  SectionFacingVectorX: Float
+  SectionFacingVectorY: Float
+  SectionFacingVectorZ: Float
+  SectionArea: Float
+}
+
+type Surface {
+  TempId: ID!
+  Name: String
+  Spaces: [Space] @relation(name:"BOUNDED_BY",direction:IN)
+  Host: AbstractElement @relation(name:"IS_ON",direction:IN)
+}
+
+
+
+
+type CableTrayTransition implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type CableTray implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Terminal implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Duct implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type DuctAccessory implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type DuctFitting implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type DuctTransition implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Pipe implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type PipeAccessory implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type PipeFitting implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type PipeTransition implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Lighting implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Asset implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Equipment implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type FireAlarm implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Security implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Safety implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Data implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Section implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+
+
+
