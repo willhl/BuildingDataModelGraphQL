@@ -1,0 +1,194 @@
+
+ type DBPanel implements AbstractElement {
+  Name: String
+  TempId: ID!
+  Area: Float
+  Category: String
+  Family: String
+  Family_and_Type: String
+  Location: String
+  LocationX: Float
+  LocationY: Float
+  LocationZ: Float
+  Mark: String
+  NominalHeight: Float
+  NominalLength: Float
+  NominalWidth: Float
+  Phase_Created: String
+  Phase_Demolished: String
+  Rated_Current: Float
+  Supply_From: String
+  Type: String
+  Type_Id: Int
+  Unit_Height: Float
+  Unit_Length: Float
+  Unit_Width:Float
+  Volume: Float
+  Workset: Int
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+  Level: Level @relation(name:"IS_ON",direction:OUT)
+  OutgoingCircuits: [Circuit] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
+  IncommingCircuit: Circuit @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
+}
+
+
+type Circuit implements AbstractElement {
+  Name: String
+  TempId: ID!
+  No_of_Ground_Conductors: Int 
+  No_of_Hot_Conductors: Int 
+  No_of_Neutral_Conductors: Int 
+  No_of_Runs: Int 
+  Apparent_Current: Float
+  Apparent_Current_Phase_A: Float 
+  Apparent_Current_Phase_B: Float 
+  Apparent_Current_Phase_C: Float 
+  Apparent_Load: Float 
+  Apparent_Load_Phase_A: String 
+  Apparent_Load_Phase_B: String 
+  Apparent_Load_Phase_C: String 
+  Balanced_Load: Float
+  Cable_Diameter_Overall_Spacing: Float 
+  Cable_Size: Float 
+  Category: String 
+  Circuit_Number: String 
+  Circuit_Protective_Device_Fault_Current_Breaking_Capacity: Float
+  Circuit_Protective_Device_Rating: Float 
+  Circuit_Protective_Device_Switched_Poles: Int 
+  Circuit_Way: Int 
+  CPC_Size: Float 
+  Design_Option: String 
+  Edited_by: String 
+  Family: String 
+  Family_and_Type: String 
+  Frame: Float 
+  Image: String 
+  Length: Float
+  Load_Classification: String 
+  Load_Name: String
+  Number_of_Elements: Int
+  Number_of_Poles: Int 
+  Phase_Conductor_Per_Phase: Int 
+  Phase_Contuctor_Neutral: String 
+  Power_Connected: String 
+  Power_Factor: Float 
+  Power_Factor_State: Float 
+  Rating: Float 
+  RCD_Trip_Current: Float 
+  Schedule_Circuit_Notes: String 
+  System_Type: String 
+  True_Current: Float
+  True_Current_Phase_A: Float
+  True_Current_Phase_B: Float 
+  True_Current_Phase_C: Float 
+  True_Load: Float
+  True_Load_Phase_A: Float
+  True_Load_Phase_B: Float 
+  True_Load_Phase_C: Float 
+  Type: String 
+  Type_Id: Int 
+  Voltage: Float
+  Voltage_Drop: Float 
+  Wire_Size: String
+  Wire_Type: String
+  Workset: String
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Panel: DBPanel @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
+  Loads: [ElectricalLoad] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
+}
+
+type ElectricalLoad implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  DBID: String @cypher(statement:"MATCH (this) RETURN id(this)")
+  Apparent_Load: Float
+  Area: Float
+  Circuit_Number: String
+  Current: Float
+  Design_Option: Int
+  Edited_by: String
+  Electrical_Data: String
+  Elevation: Float
+  Family: String
+  Family_and_Type: String
+  HasSensors: Boolean
+  Host: String
+  Host_Id: Int
+  Image: String
+  Label_Visible: Boolean
+  Lateral_Offset: Float
+  Lateral_Offset_Formula: Float
+  LocationX: Float
+  LocationY: Float
+  LocationZ: Float
+  Mark: String
+  Phase_Created: String
+  Phase_Demolished: String
+  Power_Factor: Float
+  RCD_Trip_Current: Float
+  RLX_RlxInstId: Int
+  Type: String
+  Type_Id: Int
+  Vertical_Offset: Float
+  Volume: Float
+  Workset: Int
+  Category: String
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+  Level: Level @relation(name:"IS_ON",direction:OUT)
+  Circuit: Circuit @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
+}
+
+
+
+
+type Lighting implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Asset implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+
+type FireAlarm implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Security implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Safety implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Data implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+
+
+

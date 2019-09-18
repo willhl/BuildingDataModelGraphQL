@@ -1,0 +1,20 @@
+
+type Terminal implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+
+
+type Equipment implements AbstractElement {
+  Name: String
+  TempId: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+
+
+

@@ -76,8 +76,14 @@ typings/
 # Serverless directories
 .serverless
 
+.vscode
+
+.env
+
 TMP/
 
 dist/
 
 bin/server
+
+reference

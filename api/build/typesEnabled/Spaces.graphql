@@ -1,0 +1,41 @@
+type RevitModel {
+  Project_Name: String
+  URI: String
+  ModelElements: [ModelElement] @relation(name:"IS_IN",direction:IN)
+}
+
+
+type Building {
+  Name: String
+  Spaces: [Space] @relation(name:"IS_IN",direction:IN)
+  Models: [RevitModel] @relation(name:"IS_OF",direction:IN)
+  Levels: [Level] @relation(name:"IS_IN",direction:IN)
+  Projects: [Project] @relation(name:"COMPRISES",direction:OUT)
+}
+
+
+type Level  {
+  Name: String
+  AbstractElements: [AbstractElement] @relation(name:"IS_ON",direction:IN)
+  Spaces: [Space] @relation(name:"IS_ON",direction:IN)
+  Building: Building @relation(name:"IS_IN",direction:OUT)
+}
+
+
+"""
+A Space
+"""
+type Space implements AbstractElement {
+  TempId: ID!
+  IsExternal: Boolean
+  "Space Number"
+  Number: String
+  "Space Name"
+  Name: String
+  Area: Float
+  Volume: Float
+  Contains: [AbstractElement] @relation(name:"IS_IN_SPACE",direction:IN)
+  BoundingSurfaces: [Surface] @relation(name:"BOUNDED_BY",direction:OUT)
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
