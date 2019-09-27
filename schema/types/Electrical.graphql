@@ -2,29 +2,24 @@
  type DBPanel implements AbstractElement {
   Name: String
   TempId: ID!
-  Area: Float
-  Category: String
-  Family: String
-  Family_and_Type: String
+  "Group: DB Panel, Units: N/A, Notes: "
+  Phase_Configuration: String
+  "Group: DB Panel, Units: N/A, Notes: "
+  Number_of_Ways: Int
+  "Group: DB Panel, Units: N/A, Notes: "
+  Panel_Name: String
+  "Group: DB Panel, Units: N/A, Notes: "
+  Distribution_System: String
+  "Group: DB Panel, Units: N/A, Notes: "
   Location: String
-  LocationX: Float
-  LocationY: Float
-  LocationZ: Float
-  Mark: String
-  NominalHeight: Float
-  NominalLength: Float
-  NominalWidth: Float
-  Phase_Created: String
-  Phase_Demolished: String
-  Rated_Current: Float
-  Supply_From: String
-  Type: String
-  Type_Id: Int
-  Unit_Height: Float
-  Unit_Length: Float
-  Unit_Width:Float
-  Volume: Float
-  Workset: Int
+  "Group: DB Panel, Units: A, Notes: "
+  Maximum_Continuous_Current_Rating: Float
+  "Group: DB Panel, Units: A, Notes: "
+  Isolator_Rating: Float
+  "Group: DB Panel, Units: N/A, Notes: "
+  Number_of_Poles: Float
+  "Group: DB Panel, Units: kA, Notes: "
+  Isolator_ICS: Float
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
   ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
   Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
@@ -37,10 +32,6 @@
 type Circuit implements AbstractElement {
   Name: String
   TempId: ID!
-  No_of_Ground_Conductors: Int 
-  No_of_Hot_Conductors: Int 
-  No_of_Neutral_Conductors: Int 
-  No_of_Runs: Int 
   Apparent_Current: Float
   Apparent_Current_Phase_A: Float 
   Apparent_Current_Phase_B: Float 
@@ -49,34 +40,7 @@ type Circuit implements AbstractElement {
   Apparent_Load_Phase_A: String 
   Apparent_Load_Phase_B: String 
   Apparent_Load_Phase_C: String 
-  Balanced_Load: Float
-  Cable_Diameter_Overall_Spacing: Float 
-  Cable_Size: Float 
-  Category: String 
-  Circuit_Number: String 
-  Circuit_Protective_Device_Fault_Current_Breaking_Capacity: Float
-  Circuit_Protective_Device_Rating: Float 
-  Circuit_Protective_Device_Switched_Poles: Int 
-  Circuit_Way: Int 
-  CPC_Size: Float 
-  Design_Option: String 
-  Edited_by: String 
-  Family: String 
-  Family_and_Type: String 
-  Frame: Float 
-  Image: String 
   Length: Float
-  Load_Classification: String 
-  Load_Name: String
-  Number_of_Elements: Int
-  Number_of_Poles: Int 
-  Phase_Conductor_Per_Phase: Int 
-  Phase_Contuctor_Neutral: String 
-  Power_Connected: String 
-  Power_Factor: Float 
-  Power_Factor_State: Float 
-  Rating: Float 
-  RCD_Trip_Current: Float 
   Schedule_Circuit_Notes: String 
   System_Type: String 
   True_Current: Float
@@ -88,12 +52,51 @@ type Circuit implements AbstractElement {
   True_Load_Phase_B: Float 
   True_Load_Phase_C: Float 
   Type: String 
-  Type_Id: Int 
-  Voltage: Float
-  Voltage_Drop: Float 
-  Wire_Size: String
-  Wire_Type: String
-  Workset: String
+  "Group: Circuit Protective Device, Units: Int, Notes: "
+  Circuit_Way: Int
+  "Group: Circuit Protective Device, Units: N/A, Notes: "
+  Circuit_Phase: String
+  "Group: Circuit Protective Device, Units: N/A, Notes: "
+  Circuit_Protective_Device_Type: String
+  "Group: Circuit Protective Device, Units: N/A, Notes: "
+  Time_Current_Curve_Characteristic: String
+  "Group: Circuit Protective Device, Units: A, Notes: "
+  Circuit_Protective_Device_Rating: Float
+  "Group: Circuit Protective Device, Units: mA, Notes: "
+  RCD_Trip_Current: Float
+  "Group: Circuit Protective Device, Units: N/A, Notes: "
+  Circuit_Protective_Device_Fault_Current_Breaking_Capacity: String
+  "Group: Circuit Protective Device, Units: INt, Notes: "
+  Circuit_Protective_Device_Switched_Poles: Int
+  "Group: Load, Units: N/A, Notes: "
+  Load_Classification: String
+  "Group: Load, Units: yes/No, Notes: "
+  Ring_or_Radial: Int
+  "Group: Phase Conductors, Units: mm2, Notes: "
+  Cable_Size: Float
+  "Group: Phase Conductors, Units: Int, Notes: "
+  Phase_Conductor_Per_Phase: Int
+  "Group: Phase Conductors, Units: Int, Notes: "
+  Phase_Conductor_Neutral: Int
+  "Group: Phase Conductors, Units: N/A, Notes: "
+  Installation_Method: String
+  "Group: Phase Conductors, Units: N/A, Notes: "
+  Cable_Formation_Flat: String
+  "Group: Phase Conductors, Units: N/A, Notes: "
+  Cable_Formation_Trefoil: String
+  "Group: Phase Conductors, Units: N/A, Notes: "
+  Cable_Formation_Quadfoil: String
+  "Group: Phase Conductors, Units: N/A, Notes: "
+  Cable_Diameter_Overall_Spacing: String
+  "Group: Phase Conductors, Units: N/A, Notes: "
+  Circuit_Description: String
+  "Group: CPC, Units: N/A, Notes: "
+   CPC_Armour: String
+  "Group: CPC, Units: N/A, Notes: "
+  CPC_Integral_Separate_or_Supplementary: String
+  "Group: CPC, Units: mm2, Notes: "
+  CPC_Size: Float
+
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
   ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
   Panel: DBPanel @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)

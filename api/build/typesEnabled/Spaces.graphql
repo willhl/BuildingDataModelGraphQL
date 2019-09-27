@@ -1,25 +1,4 @@
-type RevitModel {
-  Project_Name: String
-  URI: String
-  ModelElements: [ModelElement] @relation(name:"IS_IN",direction:IN)
-}
 
-
-type Building {
-  Name: String
-  Spaces: [Space] @relation(name:"IS_IN",direction:IN)
-  Models: [RevitModel] @relation(name:"IS_OF",direction:IN)
-  Levels: [Level] @relation(name:"IS_IN",direction:IN)
-  Projects: [Project] @relation(name:"COMPRISES",direction:OUT)
-}
-
-
-type Level  {
-  Name: String
-  AbstractElements: [AbstractElement] @relation(name:"IS_ON",direction:IN)
-  Spaces: [Space] @relation(name:"IS_ON",direction:IN)
-  Building: Building @relation(name:"IS_IN",direction:OUT)
-}
 
 
 """
