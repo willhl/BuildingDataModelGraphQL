@@ -1,0 +1,81 @@
+type Duct implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type DuctAccessory implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type DuctFitting implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type DuctTransition implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type Pipe implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type PipeAccessory implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type PipeFitting implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type PipeTransition implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+
+type CableTrayTransition implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+
+type CableTray implements AbstractElement {
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+}
+

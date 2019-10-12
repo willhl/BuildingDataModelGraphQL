@@ -1,11 +1,14 @@
 import { typeDefs } from "./graphql-schema";
-
+import {GraphQLScalarType} from "graphql"
 import { ApolloServer } from "apollo-server-express";
+import { SchemaDirectiveVisitor } from "graphql-tools";
 
 import express from "express";
 import { v1 as neo4j } from "neo4j-driver";
 import { makeAugmentedSchema } from "neo4j-graphql-js";
 import dotenv from "dotenv";
+import convert from "convert-units"
+//var convert = require('convert-units')
 
 // set environment variables from ../.env
 dotenv.config();
@@ -20,7 +23,40 @@ const app = express();
  * https://grandstack.io/docs/neo4j-graphql-js-api.html#makeaugmentedschemaoptions-graphqlschema
  */
 console.log(typeDefs)
-const schema = makeAugmentedSchema({typeDefs});
+
+
+const UnitableFloatScalarType = new GraphQLScalarType({
+  name: 'UnitableFloat',
+  description: 'Value with unit',
+  serialize(value, fieldNodes) {
+    if (fieldNodes && fieldNodes[0] && fieldNodes[0].arguments && fieldNodes[0].arguments[0] && fieldNodes[0].arguments[0].value && fieldNodes[0].arguments[0].value.value)
+    {
+       let units = fieldNodes[0].arguments[0].value.value
+       if (units) return convert(value).from('m2').to(units)
+    }
+    return value;
+  },
+  parseValue(value) {
+
+    return value;
+  },
+  parseLiteral(ast) {
+
+    switch (ast.kind) {
+      // Implement your own behavior here by returning what suits your needs
+      // depending on ast.kind
+    }
+  }
+});
+
+
+
+const resolvers = {
+  UnitableFloat : UnitableFloatScalarType,
+}
+
+
+const schema = makeAugmentedSchema({typeDefs, resolvers});
 
 /*
  * Create a Neo4j driver instance to connect to the database

@@ -1,0 +1,35 @@
+
+ 
+ 
+ 
+interface AbstractElement{
+  Name: String
+  Id: ID!
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+} 
+
+type ModelElement {
+  Id: ID!
+  ExternalID: String
+  Model: Model @relation(name:"IS_IN",direction:OUT)
+  AbstractElement: AbstractElement @relation(name:"REALIZED_BY",direction:IN)
+}
+
+type ElementType {
+  Name: String
+  ClassificationCode: String
+  Category: String
+  Type_Name: String
+  Family_Name: String
+  Description: String
+  AbstractElements: [AbstractElement] @relation(name:"IS_OF",direction:IN)
+}
+
+
+type Mutation {
+    AddElementTypeToElement(spaceId:ID! abstractId:ID!) : String @cypher(statement:"MATCH (sp:Space {Id: $spaceId}), (ae {Id: $abstractId}) MERGE (ae)-[r:IS_IN_SPACE]->(sp)")
+    RemoveElementTypeFromElement(spaceId:ID! abstractId:ID!) : String @cypher(statement:"MATCH (sp:Space {id: $spaceId})<-[r:IS_IN_SPACE]-(ae {id: $abstractId}) DELETE r")
+}
+
+

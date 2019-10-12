@@ -1,0 +1,29 @@
+
+
+
+"""
+A Space
+"""
+type Space implements AbstractElement {
+  Id: ID!
+  IsExternal: Boolean
+  "Space Number"
+  Number: String
+  "Space Name"
+  Name: String
+  Area (unit: AreaUnits = m2): UnitableFloat
+  Volume: Float
+  AllElements: [AbstractElement] @relation(name:"IS_IN_SPACE",direction:IN)
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+}
+
+type Mutation {
+    AddElementToSpace(spaceId:ID! abstractId:ID!) : String @cypher(statement:"MATCH (sp:Space {Id: $spaceId}), (ae {Id: $abstractId}) MERGE (ae)-[r:IS_IN_SPACE]->(sp)")
+    RemoveElementFromSpace(spaceId:ID! abstractId:ID!) : String @cypher(statement:"MATCH (sp:Space {Id: $spaceId})<-[r:IS_IN_SPACE]-(ae {Id: $abstractId}) DELETE r")
+}
+
+
+
+scalar UnitableFloat
+

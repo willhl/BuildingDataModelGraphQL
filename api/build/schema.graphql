@@ -11,7 +11,7 @@ interface AbstractElement{
 
 type ModelElement {
   ExternalID: String
-  Model: RevitModel @relation(name:"IS_IN",direction:OUT)
+  Model: Model @relation(name:"IS_IN",direction:OUT)
   AbstractElement: AbstractElement @relation(name:"REALIZED_BY",direction:IN)
 }
 
@@ -32,12 +32,12 @@ type Project {
 type Building {
   Name: String
   Spaces: [Space] @relation(name:"IS_IN",direction:IN)
-  Models: [RevitModel] @relation(name:"IS_OF",direction:IN)
+  Models: [] @relation(name:"IS_OF",direction:IN)
   Levels: [Level] @relation(name:"IS_IN",direction:IN)
   Projects: [Project] @relation(name:"COMPRISES",direction:OUT)
 }
 
-type RevitModel {
+type Model {
   Project_Name: String
   URI: String
   ModelElements: [ModelElement] @relation(name:"IS_IN",direction:IN)

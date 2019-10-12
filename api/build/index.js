@@ -2,7 +2,11 @@
 
 var _graphqlSchema = require("./graphql-schema");
 
+var _graphql = require("graphql");
+
 var _apolloServerExpress = require("apollo-server-express");
+
+var _graphqlTools = require("graphql-tools");
 
 var _express = require("express");
 
@@ -16,7 +20,13 @@ var _dotenv = require("dotenv");
 
 var _dotenv2 = _interopRequireDefault(_dotenv);
 
+var _convertUnits = require("convert-units");
+
+var _convertUnits2 = _interopRequireDefault(_convertUnits);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//var convert = require('convert-units')
 
 // set environment variables from ../.env
 _dotenv2.default.config();
@@ -31,7 +41,32 @@ var app = (0, _express2.default)();
  * https://grandstack.io/docs/neo4j-graphql-js-api.html#makeaugmentedschemaoptions-graphqlschema
  */
 console.log(_graphqlSchema.typeDefs);
-var schema = (0, _neo4jGraphqlJs.makeAugmentedSchema)({ typeDefs: _graphqlSchema.typeDefs });
+
+var UnitableFloatScalarType = new _graphql.GraphQLScalarType({
+  name: 'UnitableFloat',
+  description: 'Value with unit',
+  serialize: function serialize(value, fieldNodes) {
+    if (fieldNodes && fieldNodes[0] && fieldNodes[0].arguments && fieldNodes[0].arguments[0] && fieldNodes[0].arguments[0].value && fieldNodes[0].arguments[0].value.value) {
+      var units = fieldNodes[0].arguments[0].value.value;
+      if (units) return (0, _convertUnits2.default)(value).from('m2').to(units);
+    }
+    return value;
+  },
+  parseValue: function parseValue(value) {
+
+    return value;
+  },
+  parseLiteral: function parseLiteral(ast) {
+
+    switch (ast.kind) {}
+  }
+});
+
+var resolvers = {
+  UnitableFloat: UnitableFloatScalarType
+};
+
+var schema = (0, _neo4jGraphqlJs.makeAugmentedSchema)({ typeDefs: _graphqlSchema.typeDefs, resolvers: resolvers });
 
 /*
  * Create a Neo4j driver instance to connect to the database

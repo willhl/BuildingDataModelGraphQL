@@ -1,0 +1,21 @@
+
+
+type HeatingCoolingSystem{
+    Name: string
+    IsPrimary: boolean
+
+
+}
+
+type Boiler{
+
+    
+}
+
+type CHP{
+
+    
+}
+
+
+
