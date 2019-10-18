@@ -7,6 +7,7 @@ type Sensor implements AbstractElement {
   Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
 }
 
+
 type Control implements AbstractElement {
   Name: String
   Id: ID!
@@ -19,9 +20,23 @@ type Control implements AbstractElement {
 type Space {
   SensorElements: [Sensor] @relation(name:"IS_IN_SPACE",direction:IN)
   ControlElements: [Control] @relation(name:"IS_IN_SPACE",direction:IN)
+  Controls: Control @relation(name:"CONTROLS",direction:OUT)
 }
+
 
 type Furniture {
   Sensors: Sensor @relation(name:"SENSING",direction:OUT)
-  Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
+  Controls: Control @relation(name:"CONTROLS",direction:OUT)
 }
+
+
+type ElectricalLoad {
+  Sensors: Sensor @relation(name:"SENSING",direction:OUT)
+  Controls: Control @relation(name:"CONTROLS",direction:OUT)
+}
+
+type Door {
+  Sensors: Sensor @relation(name:"SENSING",direction:OUT)
+  Controls: Control @relation(name:"CONTROLS",direction:OUT)
+}
+

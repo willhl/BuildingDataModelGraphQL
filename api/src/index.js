@@ -1,14 +1,14 @@
 import { typeDefs } from "./graphql-schema";
-import {GraphQLScalarType} from "graphql"
 import { ApolloServer } from "apollo-server-express";
-import { SchemaDirectiveVisitor } from "graphql-tools";
 
 import express from "express";
 import { v1 as neo4j } from "neo4j-driver";
 import { makeAugmentedSchema } from "neo4j-graphql-js";
 import dotenv from "dotenv";
-import convert from "convert-units"
-//var convert = require('convert-units')
+
+import UnitFloatScalarType from "./units/UnitFloatScalarType"
+import ScalarUnitResolvers from "./units/ScalarUnitResolvers"
+var convert = require('convert-units')
 
 // set environment variables from ../.env
 dotenv.config();
@@ -24,35 +24,17 @@ const app = express();
  */
 console.log(typeDefs)
 
-
-const UnitableFloatScalarType = new GraphQLScalarType({
-  name: 'UnitableFloat',
-  description: 'Value with unit',
-  serialize(value, fieldNodes) {
-    if (fieldNodes && fieldNodes[0] && fieldNodes[0].arguments && fieldNodes[0].arguments[0] && fieldNodes[0].arguments[0].value && fieldNodes[0].arguments[0].value.value)
-    {
-       let units = fieldNodes[0].arguments[0].value.value
-       if (units) return convert(value).from('m2').to(units)
-    }
-    return value;
-  },
-  parseValue(value) {
-
-    return value;
-  },
-  parseLiteral(ast) {
-
-    switch (ast.kind) {
-      // Implement your own behavior here by returning what suits your needs
-      // depending on ast.kind
-    }
-  }
-});
-
-
-
 const resolvers = {
-  UnitableFloat : UnitableFloatScalarType,
+  UnitFloat : new UnitFloatScalarType("UnitFloat"),
+  SquareMeters : new UnitFloatScalarType("SquareMeters", "m2"),
+  CubicMilliMeters : new UnitFloatScalarType("CubicMilliMeters", "mm2"),
+  CubicMeters : new UnitFloatScalarType("CubicMeters", "m3"),
+  Amperes : new UnitFloatScalarType("Amperes", "A"),
+  Kiloamperes : new UnitFloatScalarType("Kiloamperes", "kA"),
+  Milliamperes : new UnitFloatScalarType("Milliamperes", "mA"),
+  Watts : new UnitFloatScalarType("Watts", "W"),
+  VoltAmperes : new UnitFloatScalarType("VoltAmperes", "VA"),
+  LitersPerSecond: new UnitFloatScalarType("LitersPerSecond", "l_per_s"),
 }
 
 

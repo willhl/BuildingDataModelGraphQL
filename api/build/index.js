@@ -2,11 +2,7 @@
 
 var _graphqlSchema = require("./graphql-schema");
 
-var _graphql = require("graphql");
-
 var _apolloServerExpress = require("apollo-server-express");
-
-var _graphqlTools = require("graphql-tools");
 
 var _express = require("express");
 
@@ -20,13 +16,17 @@ var _dotenv = require("dotenv");
 
 var _dotenv2 = _interopRequireDefault(_dotenv);
 
-var _convertUnits = require("convert-units");
+var _UnitFloatScalarType = require("./units/UnitFloatScalarType");
 
-var _convertUnits2 = _interopRequireDefault(_convertUnits);
+var _UnitFloatScalarType2 = _interopRequireDefault(_UnitFloatScalarType);
+
+var _ScalarUnitResolvers = require("./units/ScalarUnitResolvers");
+
+var _ScalarUnitResolvers2 = _interopRequireDefault(_ScalarUnitResolvers);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//var convert = require('convert-units')
+var convert = require('convert-units');
 
 // set environment variables from ../.env
 _dotenv2.default.config();
@@ -42,28 +42,17 @@ var app = (0, _express2.default)();
  */
 console.log(_graphqlSchema.typeDefs);
 
-var UnitableFloatScalarType = new _graphql.GraphQLScalarType({
-  name: 'UnitableFloat',
-  description: 'Value with unit',
-  serialize: function serialize(value, fieldNodes) {
-    if (fieldNodes && fieldNodes[0] && fieldNodes[0].arguments && fieldNodes[0].arguments[0] && fieldNodes[0].arguments[0].value && fieldNodes[0].arguments[0].value.value) {
-      var units = fieldNodes[0].arguments[0].value.value;
-      if (units) return (0, _convertUnits2.default)(value).from('m2').to(units);
-    }
-    return value;
-  },
-  parseValue: function parseValue(value) {
-
-    return value;
-  },
-  parseLiteral: function parseLiteral(ast) {
-
-    switch (ast.kind) {}
-  }
-});
-
 var resolvers = {
-  UnitableFloat: UnitableFloatScalarType
+  UnitFloat: new _UnitFloatScalarType2.default("UnitFloat"),
+  SquareMeters: new _UnitFloatScalarType2.default("SquareMeters", "m2"),
+  CubicMilliMeters: new _UnitFloatScalarType2.default("CubicMilliMeters", "mm2"),
+  CubicMeters: new _UnitFloatScalarType2.default("CubicMeters", "m3"),
+  Amperes: new _UnitFloatScalarType2.default("Amperes", "A"),
+  Kiloamperes: new _UnitFloatScalarType2.default("Kiloamperes", "kA"),
+  Milliamperes: new _UnitFloatScalarType2.default("Milliamperes", "mA"),
+  Watts: new _UnitFloatScalarType2.default("Watts", "W"),
+  VoltAmperes: new _UnitFloatScalarType2.default("VoltAmperes", "VA"),
+  LitersPerSecond: new _UnitFloatScalarType2.default("LitersPerSecond", "l_per_s")
 };
 
 var schema = (0, _neo4jGraphqlJs.makeAugmentedSchema)({ typeDefs: _graphqlSchema.typeDefs, resolvers: resolvers });

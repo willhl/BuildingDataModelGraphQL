@@ -1,5 +1,11 @@
-#https://www.npmjs.com/package/convert-units
+#based on https://www.npmjs.com/package/convert-units
 
+#universal unit type, supports dynamic query conversion but not in mutations
+#because it has no default unit type avalaible to mutations
+scalar UnitFloat
+
+
+scalar Meters
 enum LengthUnits{
 mm
 cm
@@ -10,6 +16,9 @@ ft
 mi
 }
 
+
+scalar SquareMeters
+scalar SquareMilliMeters
 enum AreaUnits{
 mm2
 cm2
@@ -22,6 +31,7 @@ ac
 mi2
 }
 
+
 enum MassUnits{
 mcg
 mg
@@ -33,6 +43,9 @@ mt
 t
 }
 
+
+scalar CubicMeters
+scalar CubicMilliMeters
 enum VolumeUnits{
 mm3
 cm3
@@ -53,6 +66,7 @@ ft3
 yd3
 }
 
+scalar LitersPerSecond
 enum VolumeFlowRateUnits{
 mm3_per_s
 cm3_per_s
@@ -92,6 +106,7 @@ yd3_per_s
 yd3_per_min
 yd3_per_h
 }
+
 
 enum TemperatureUnits{
 C
@@ -165,18 +180,23 @@ ppt
 ppq
 }
 
+
 enum VoltageUnits{
 V
 mV
 kV
 }
 
+scalar Amperes
+scalar Kiloamperes
+scalar Milliamperes
 enum CurrentUnits{
 A
 mA
 kA  
 }
 
+scalar Watts
 enum PowerUnits{
 W
 mW
@@ -185,6 +205,7 @@ MW
 GW
 }
 
+scalar VoltAmperes
 enum ApparentPowerUnits{
 VA
 mVA

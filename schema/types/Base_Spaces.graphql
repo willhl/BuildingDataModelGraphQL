@@ -11,8 +11,8 @@ type Space implements AbstractElement {
   Number: String
   "Space Name"
   Name: String
-  Area (unit: AreaUnits = m2): UnitableFloat
-  Volume: Float
+  Area (unit: AreaUnits = m2): SquareMeters
+  Volume (unit: VolumeUnits = m3): CubicMeters
   AllElements: [AbstractElement] @relation(name:"IS_IN_SPACE",direction:IN)
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
   ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
@@ -25,5 +25,4 @@ type Mutation {
 
 
 
-scalar UnitableFloat
 

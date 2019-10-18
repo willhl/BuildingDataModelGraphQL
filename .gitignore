@@ -89,5 +89,7 @@ bin/server
 
 reference
 
+api/build
 BuilderingGraphServer/neo4j/data
 BuilderingGraphServer/neo4j/conf
+
