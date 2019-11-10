@@ -1,11 +1,14 @@
 
-type Project {
+type Project implements BaseElement @additionalLabels(labels: ["BaseElement"]) {
   Name: String
+  Id: ID!
+  Buildings: [Building] @relation(name:"INCLUDES",direction:OUT)
 }
  
-
- type Building {
+ type Building implements BaseElement @additionalLabels(labels: ["BaseElement"]) {
   Name: String
+  Id: ID!
+  BuildingType: String
   Spaces: [Space] @relation(name:"IS_IN",direction:IN)
   Models: [Model] @relation(name:"IS_OF",direction:IN)
   Levels: [Level] @relation(name:"IS_IN",direction:IN)
@@ -13,17 +16,38 @@ type Project {
 }
 
 
-type Level  {
+type Level implements AbstractElement @additionalLabels(labels: ["AbstractElement"]) {
   Name: String
+  Id: ID!
+  Abbreviation: String
+  Elevation (unit: LengthUnits = m): Meters
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
   AbstractElements: [AbstractElement] @relation(name:"IS_ON",direction:IN)
   Spaces: [Space] @relation(name:"IS_ON",direction:IN)
   Building: Building @relation(name:"IS_IN",direction:OUT)
 }
 
-
-type Model {
-  Project_Name: String
-  URI: String
-  ModelElements: [ModelElement] @relation(name:"IS_IN",direction:IN)
+type Space {
+    BaseLevel: Level @relation(name:"IS_ON",direction:OUT)
 }
+
+type Mutation {
+    Add_Project_INCLUDES_Building(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:Project{Id: $fromId}),(ton:Building {Id: $toId}) MERGE (frn)-[r:INCLUDES]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:INCLUDES]->(ton2) where Id(ton) <> Id(ton2) delete rs")   
+    Remove_Project_INCLUDES_Building(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:Project {Id: $fromId})-[r:INCLUDES]->(ton:Building {Id: $toId}) DELETE r")
+
+    Add_Space_IS_IN_Building(fromId:ID! toId:ID! user:String) : String @cypher(statement:"MATCH (frn:Space {Id: $fromId}),(ton:Building {Id: $toId}) MERGE (frn)-[r:IS_IN]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:IS_IN]->(ton2) where Id(ton) <> Id(ton2) delete rs")   
+    Remove_Space_IS_IN_Building(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:Space {Id: $fromId})-[r:IS_IN]->(ton:Building {Id: $toId}) DELETE r")
+
+    Add_Space_IS_ON_Level(fromId:ID! toId:ID! user:String) : String @cypher(statement:"MATCH (frn:Space {Id: $fromId}),(ton:Level {Id: $toId}) MERGE (frn)-[r:IS_ON]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:IS_IN]->(ton2) where Id(ton) <> Id(ton2) delete rs")   
+    Remove_Space_IS_ON_Level(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:Space {Id: $fromId})-[r:IS_ON]->(ton:Level {Id: $toId}) DELETE r")
+
+    Add_Level_IS_IN_Building(fromId:ID! toId:ID! user:String) : String @cypher(statement:"MATCH (frn:Level {Id: $fromId}),(ton:Building {Id: $toId}) MERGE (frn)-[r:IS_IN]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:IS_IN]->(ton2) where Id(ton) <> Id(ton2) delete rs")   
+    Remove_Space_IS_IN_Building(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:Level {Id: $fromId})-[r:IS_IN]->(ton:Building {Id: $toId}) DELETE r")
+
+}
+
+
+
+
 

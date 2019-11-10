@@ -1,5 +1,5 @@
 
- type DBPanel implements AbstractElement {
+ type DBPanel {
   "Group: DB Panel, Units: N/A, Notes: "
   Phase_Configuration: String
   "Group: DB Panel, Units: N/A, Notes: "
@@ -20,7 +20,7 @@
   Isolator_ICS (units: CurrentUnits = kA ): Kiloamperes
 }
 
-type Circuit implements AbstractElement {
+type Circuit {
   Apparent_Current (units: CurrentUnits = A ): Amperes
   Apparent_Current_Phase_A (units: CurrentUnits = A ): Amperes 
   Apparent_Current_Phase_B (units: CurrentUnits = A ): Amperes 
@@ -84,7 +84,7 @@ type Circuit implements AbstractElement {
   CPC_Size (unit: AreaUnits = mm2): SquareMilliMeters
 }
 
-type ElectricalLoad implements AbstractElement {
+type ElectricalLoad {
   Apparent_Load: Float
   Area: Float
   Circuit_Number: String

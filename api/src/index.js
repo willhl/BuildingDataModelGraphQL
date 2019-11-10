@@ -25,7 +25,9 @@ const app = express();
 console.log(typeDefs)
 
 const resolvers = {
+  
   UnitFloat : new UnitFloatScalarType("UnitFloat"),
+  Meters: new UnitFloatScalarType("Meters", "m"),
   SquareMeters : new UnitFloatScalarType("SquareMeters", "m2"),
   CubicMilliMeters : new UnitFloatScalarType("CubicMilliMeters", "mm2"),
   CubicMeters : new UnitFloatScalarType("CubicMeters", "m3"),

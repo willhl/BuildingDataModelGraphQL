@@ -1,5 +1,5 @@
 
-type Asset {
+type Asset implements BaseElement {
   Name: String
   Id: ID!
   Replaces: [Asset] @relation(name:"REPLACES",direction:OUT)
@@ -8,14 +8,14 @@ type Asset {
   Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
 }
 
-type MaintenanceEvent {
+type MaintenanceEvent implements BaseElement{
   Name: String
   Id: ID!
   Description: String
   Asset: [Asset] @relation(name:"EVENT",direction:IN)
 }
 
-type FaultEvent {
+type FaultEvent implements BaseElement {
   Name: String
   Id: ID!
   FaultLevel: FaultLevel

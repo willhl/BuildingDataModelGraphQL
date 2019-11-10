@@ -43,7 +43,9 @@ var app = (0, _express2.default)();
 console.log(_graphqlSchema.typeDefs);
 
 var resolvers = {
+
   UnitFloat: new _UnitFloatScalarType2.default("UnitFloat"),
+  Meters: new _UnitFloatScalarType2.default("Meters", "m"),
   SquareMeters: new _UnitFloatScalarType2.default("SquareMeters", "m2"),
   CubicMilliMeters: new _UnitFloatScalarType2.default("CubicMilliMeters", "mm2"),
   CubicMeters: new _UnitFloatScalarType2.default("CubicMeters", "m3"),

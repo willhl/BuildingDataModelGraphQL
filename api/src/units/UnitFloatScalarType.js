@@ -28,11 +28,14 @@ function serialize(value, fieldNodes, info) {
     if (fromUnits && fieldNodes && fieldNodes[0] && fieldNodes[0].arguments && fieldNodes[0].arguments[0] && fieldNodes[0].arguments[0].value && fieldNodes[0].arguments[0].value.value)
     {
        let reqUnits = fieldNodes[0].arguments[0].value.value
-       return convert(num).from(fromUnits).to(reqUnits)
+       return convert(num).from(toConvertValue(fromUnits)).to(toConvertValue(reqUnits))
     }
     return num;
   }
 
+function toConvertValue(graphQLUnit){
+    return graphQLUnit.replace("_per_", "/").replace("_","-")
+}
 
 function parseValue(value) {
   

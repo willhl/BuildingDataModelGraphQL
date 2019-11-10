@@ -19,7 +19,7 @@ type Circuit implements AbstractElement {
   Loads: [ElectricalLoad] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
 }
 
-type ElectricalLoad implements AbstractElement {
+type ElectricalLoad implements AbstractElement @additionalLabels(labels: ["AbstractElement"]) {
   Name: String
   Id: ID!
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
@@ -71,7 +71,7 @@ type Data implements AbstractElement {
 }
 
 
-type Communications implements AbstractElement  {
+type Communications implements AbstractElement {
   Name: String
   Id: ID!
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
