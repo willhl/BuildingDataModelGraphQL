@@ -46,7 +46,7 @@ type ElementType implements AbstractElement {
 
 type Mutation {
 
-
+    
     Add_AbstractElement_IS_OF_ElementType(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:AbstractElement {Id: $fromId}),(ton:ElementType {Id: $toId}) MERGE (frn)-[r:IS_OF]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:IS_OF]->(ton2) where Id(ton) <> Id(ton2) delete rs")   
     Remove_AbstractElement_IS_OF_ElementType(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:AbstractElement {Id: $fromId})-[r:IS_OF]->(ton:ElementType {Id: $toId}) DELETE r")
 

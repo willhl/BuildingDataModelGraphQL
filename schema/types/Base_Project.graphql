@@ -45,6 +45,10 @@ type Mutation {
     Add_Level_IS_IN_Building(fromId:ID! toId:ID! user:String) : String @cypher(statement:"MATCH (frn:Level {Id: $fromId}),(ton:Building {Id: $toId}) MERGE (frn)-[r:IS_IN]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:IS_IN]->(ton2) where Id(ton) <> Id(ton2) delete rs")   
     Remove_Space_IS_IN_Building(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:Level {Id: $fromId})-[r:IS_IN]->(ton:Building {Id: $toId}) DELETE r")
 
+    Add_AbstractElement_IS_ON_Level(fromId:ID! toId:ID! user:String) : String @cypher(statement:"MATCH (frn:AbstractElement {Id: $fromId}),(ton:Level {Id: $toId}) MERGE (frn)-[r:IS_ON]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:IS_IN]->(ton2) where Id(ton) <> Id(ton2) delete rs")   
+    Remove_AbstractElement_IS_ON_Level(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:AbstractElement {Id: $fromId})-[r:IS_ON]->(ton:Level {Id: $toId}) DELETE r")
+
+
 }
 
 

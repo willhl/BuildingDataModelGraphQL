@@ -1,5 +1,28 @@
 
- type DBPanel implements AbstractElement {
+ 
+
+interface ElectricalLoadElement {
+  Id: ID!
+  Name: String
+  Circuit: Circuit
+  ElementType: ElementType
+  ModelElements: [ModelElement]
+  Space: Space
+  Level: Level
+}
+
+type Circuit implements AbstractElement {
+  Name: String
+  Id: ID!
+  Number: String
+  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
+  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
+  SourcePanel: DBPanel @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
+  Loads: [ElectricalLoadElement] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
+  Panels: [DBPanel] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
+}
+
+ type DBPanel implements AbstractElement & ElectricalLoadElement @additionalLabels(labels: ["AbstractElement", "ElectricalLoadElement"]) {
   Name: String
   Id: ID!
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
@@ -7,19 +30,11 @@
   Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
   Level: Level @relation(name:"IS_ON",direction:OUT)
   OutgoingCircuits: [Circuit] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
-  IncommingCircuit: Circuit @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
+  Circuit: Circuit @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
 }
 
-type Circuit implements AbstractElement {
-  Name: String
-  Id: ID!
-  ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
-  ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
-  Panel: DBPanel @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
-  Loads: [ElectricalLoad] @relation(name:"ELECTRICAL_FLOW_TO",direction:OUT)
-}
 
-type ElectricalLoad implements AbstractElement @additionalLabels(labels: ["AbstractElement"]) {
+type ElectricalLoad implements AbstractElement & ElectricalLoadElement @additionalLabels(labels: ["AbstractElement", "ElectricalLoadElement"]) {
   Name: String
   Id: ID!
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
@@ -80,7 +95,7 @@ type Communications implements AbstractElement {
 }
 
 type Space {
-  ElectricalLoadElements: [ElectricalLoad] @relation(name:"IS_IN_SPACE",direction:IN)
+  ElectricalLoadElements: [ElectricalLoadElement] @relation(name:"IS_IN_SPACE",direction:IN)
   LightingElements: [Lighting] @relation(name:"IS_IN_SPACE",direction:IN)
   FireAlarmElements: [FireAlarm] @relation(name:"IS_IN_SPACE",direction:IN)
   SecurityElements: [Security] @relation(name:"IS_IN_SPACE",direction:IN)
@@ -90,3 +105,8 @@ type Space {
 }
 
 
+type Mutation {
+    Add_Circuit_ELECTRICAL_FLOW_TO_ElectricalLoadElement(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:Circuit {Id: $fromId}),(ton:ElectricalLoadElement {Id: $toId}) MERGE (frn)-[r:ELECTRICAL_FLOW_TO]->(ton)")   
+    Add_ElectricalLoadElement_ELECTRICAL_FLOW_TO_Circuit(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:ElectricalLoadElement {Id: $fromId}),(ton:Circuit {Id: $toId}) MERGE (frn)-[r:ELECTRICAL_FLOW_TO]->(ton)")   
+
+}
