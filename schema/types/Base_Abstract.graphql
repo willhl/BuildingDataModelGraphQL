@@ -53,7 +53,7 @@ type Mutation {
 
     AddElementTypeToElement(spaceId:ID! abstractId:ID!) : String @cypher(statement:"MATCH (sp:Space {Id: $spaceId}), (ae {Id: $abstractId}) MERGE (ae)-[r:IS_IN_SPACE]->(sp)")
     RemoveElementTypeFromElement(spaceId:ID! abstractId:ID!) : String @cypher(statement:"MATCH (sp:Space {id: $spaceId})<-[r:IS_IN_SPACE]-(ae {id: $abstractId}) DELETE r")
-    Add_AbstractElement_REALIZED_BY_ModelElement(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn {Id: $fromId}),(ton:ModelElement {Id: $toId}) MERGE (frn)-[r:REALIZED_BY]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:REALIZED_BY]->(ton2) where Id(ton) <> Id(ton2) delete rs")   
+    Add_AbstractElement_REALIZED_BY_ModelElement(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn {Id: $fromId}),(ton:ModelElement {Id: $toId}) MERGE (frn)-[r:REALIZED_BY]->(ton)")   
     Add_ModelElement_IS_IN_Model(fromId:ID! toId:ID!) : String @cypher(statement:"MATCH (frn:ModelElement {Id: $fromId}),(ton:Model {Id: $toId}) MERGE (frn)-[r:IS_IN]->(ton) with frn,ton OPTIONAL MATCH (frn)-[rs:IS_IN]->(ton2) where Id(ton) <> Id(ton2) delete rs")  
 }
 
