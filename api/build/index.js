@@ -40,7 +40,7 @@ var app = (0, _express2.default)();
  * in generated queries and/or mutations. Read more in the docs:
  * https://grandstack.io/docs/neo4j-graphql-js-api.html#makeaugmentedschemaoptions-graphqlschema
  */
-console.log(_graphqlSchema.typeDefs);
+//console.log(typeDefs)
 
 var resolvers = {
 

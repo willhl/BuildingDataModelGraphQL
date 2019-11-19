@@ -86,10 +86,9 @@ type Circuit {
 }
 
 type ElectricalLoad {
-  Apparent_Load: Float
   Area: Float
   Circuit_Number: String
-  Current: Float
+  Current (units: CurrentUnits = A ): Amperes
   Design_Option: Int
   Edited_by: String
   Electrical_Data: String
@@ -124,7 +123,7 @@ type ElectricalOutlet implements AbstractElement & ElectricalLoadElement @additi
   Is_Essential: Boolean
   Is_Cleaners: Boolean
   Number_Of_Outlets: Int
-  Apparent_Load: Float
+  Apparent_Load (units: ApparentPowerUnits = VA): VoltAmperes
   Diversity: Float
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
   ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)

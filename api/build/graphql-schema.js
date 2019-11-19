@@ -28,6 +28,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 var typesArray = (0, _mergeGraphqlSchemas.fileLoader)(_path2.default.join(__dirname, './typesEnabled'));
+console.log(typesArray);
 //const typeDefs = mergeTypes(typesArray, { all: true });
 //console.log(mergedTypes)
 var typeDefs = exports.typeDefs = (0, _mergeGraphqlSchemas.mergeTypes)(typesArray, { all: true }).toString("utf-8");

@@ -4,6 +4,8 @@
 interface ElectricalLoadElement {
   Id: ID!
   Name: String
+  Apparent_Load (units: ApparentPowerUnits = VA ): VoltAmperes
+  Diversity: Float
   Circuit: Circuit
   ElementType: ElementType
   ModelElements: [ModelElement]
@@ -15,6 +17,8 @@ type Circuit implements AbstractElement {
   Name: String
   Id: ID!
   Number: String
+  Voltage (units: VoltageUnits = V): Volts
+  Apparent_Load (units: ApparentPowerUnits = VA ): VoltAmperes
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
   ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
   SourcePanel: DBPanel @relation(name:"ELECTRICAL_FLOW_TO",direction:IN)
@@ -25,6 +29,8 @@ type Circuit implements AbstractElement {
  type DBPanel implements AbstractElement & ElectricalLoadElement @additionalLabels(labels: ["AbstractElement", "ElectricalLoadElement"]) {
   Name: String
   Id: ID!
+  Diversity: Float
+  Apparent_Load (units: ApparentPowerUnits = VA): VoltAmperes
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
   ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
   Space: Space @relation(name:"IS_IN_SPACE",direction:OUT)
@@ -37,6 +43,8 @@ type Circuit implements AbstractElement {
 type ElectricalLoad implements AbstractElement & ElectricalLoadElement @additionalLabels(labels: ["AbstractElement", "ElectricalLoadElement"]) {
   Name: String
   Id: ID!
+  Diversity: Float
+  Apparent_Load (units: ApparentPowerUnits = VA ): VoltAmperes
   ElementType: ElementType @relation(name:"IS_OF",direction:OUT)
   ModelElements: [ModelElement] @relation(name:"REALIZED_BY",direction:OUT)
   DBID: String @cypher(statement:"MATCH (this) RETURN id(this)")

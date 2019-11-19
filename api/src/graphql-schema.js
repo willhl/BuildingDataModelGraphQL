@@ -12,6 +12,7 @@ import path from "path";
 
 
 const typesArray = fileLoader(path.join(__dirname, './typesEnabled'));
+console.log(typesArray);
 //const typeDefs = mergeTypes(typesArray, { all: true });
 //console.log(mergedTypes)
 export const typeDefs = mergeTypes(typesArray, { all: true }).toString("utf-8");
