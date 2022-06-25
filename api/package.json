@@ -29,7 +29,7 @@
     "ncp": "^2.0.0",
     "neo4j-driver": "^1.7.5",
     "neo4j-graphql-js": "^2.7.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
